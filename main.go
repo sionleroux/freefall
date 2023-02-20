@@ -8,6 +8,7 @@ import (
 	"errors"
 	"image"
 	"log"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -23,6 +24,7 @@ func main() {
 	game := &Game{
 		Size:   nokia.GameSize,
 		Player: &Player{image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2)},
+		Dusts:  Dusts{},
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
@@ -34,6 +36,7 @@ func main() {
 type Game struct {
 	Size   image.Point
 	Player *Player
+	Dusts  Dusts
 }
 
 // Layout is hardcoded for now, may be made dynamic in future
@@ -58,12 +61,12 @@ func (g *Game) Update() error {
 		}
 	}
 
+	g.Dusts.Update()
+
 	// Movement controls
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
 		g.Player.Move()
 	}
-
-	// XXX: Write game logic here
 
 	return nil
 }
@@ -71,12 +74,22 @@ func (g *Game) Update() error {
 // Draw draws the game screen by one frame
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(nokia.PaletteOriginal.Dark())
+
+	for _, d := range g.Dusts {
+		ebitenutil.DrawRect(
+			screen,
+			float64(d.Coords.X), float64(d.Coords.Y),
+			1, 1,
+			nokia.PaletteOriginal.Light(),
+		)
+	}
+
 	ebitenutil.DrawRect(
 		screen,
 		float64(g.Player.Coords.X),
 		float64(g.Player.Coords.Y),
-		4,
-		4,
+		5,
+		5,
 		nokia.PaletteOriginal.Light(),
 	)
 }
@@ -89,4 +102,40 @@ type Player struct {
 // Move moves the player upwards
 func (p *Player) Move() {
 	p.Coords.Y--
+}
+
+// Dust is decorative dirt on the screen to give the illusion of motion
+type Dust struct {
+	Coords image.Point
+}
+
+func (d *Dust) Update() {
+	// Move dusts up
+	log.Println(d.Coords.X, d.Coords.Y)
+	d.Coords.Y--
+	log.Println(d.Coords.X, d.Coords.Y)
+}
+
+type Dusts []*Dust
+
+func (ds *Dusts) Update() {
+	const maxDusts = 5
+
+	if len(*ds) < maxDusts {
+		dsX := rand.Intn(nokia.GameSize.X)
+		*ds = append(*ds, &Dust{
+			image.Pt(dsX, nokia.GameSize.Y+1),
+		})
+	}
+
+	for i, d := range *ds {
+		d.Update()
+		if d.Coords.Y < 0 {
+			*ds = append((*ds)[:i], (*ds)[i+1:]...)
+		}
+	}
+}
+
+type Entity interface {
+	Update()
 }
