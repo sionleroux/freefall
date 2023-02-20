@@ -122,9 +122,7 @@ type Dust struct {
 
 func (d *Dust) Update() {
 	// Move dusts up
-	log.Println(d.Coords.X, d.Coords.Y)
 	d.Coords.Y--
-	log.Println(d.Coords.X, d.Coords.Y)
 }
 
 type Dusts []*Dust
