@@ -34,10 +34,10 @@ jobs:
     - name: Upload Windows exe
       uses: actions/upload-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-win
+        name: freefall-win
         path: |
           LICENSE
-          ebitengine-nokiajam-template.exe
+          freefall.exe
 
   build-mac:
     name: Build MacOS binary
@@ -54,12 +54,12 @@ jobs:
       run: go build
     - name: Tar it up
       shell: bash
-      run: tar -zcvf ebitengine-nokiajam-template-mac.tar.gz ebitengine-nokiajam-template LICENSE
+      run: tar -zcvf freefall-mac.tar.gz freefall LICENSE
     - name: Upload Mac exe
       uses: actions/upload-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-mac
-        path: ebitengine-nokiajam-template-mac.tar.gz
+        name: freefall-mac
+        path: freefall-mac.tar.gz
 
   build-lin:
     name: Build Linux binary
@@ -79,12 +79,12 @@ jobs:
       run: go build -v
     - name: Tar it up
       shell: bash
-      run: tar -zcvf ebitengine-nokiajam-template-lin.tar.gz ebitengine-nokiajam-template LICENSE
+      run: tar -zcvf freefall-lin.tar.gz freefall LICENSE
     - name: Upload Linux exe
       uses: actions/upload-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-lin
-        path: ebitengine-nokiajam-template-lin.tar.gz
+        name: freefall-lin
+        path: freefall-lin.tar.gz
 
   build-web:
     name: Build Web binary
@@ -98,14 +98,14 @@ jobs:
         go-version: 1.19
     - name: Build Web binary
       shell: bash
-      run: GOOS=js GOARCH=wasm go build -v -ldflags "-w -s" -o dist/web/ebitengine-nokiajam-template.wasm
+      run: GOOS=js GOARCH=wasm go build -v -ldflags "-w -s" -o dist/web/freefall.wasm
     - name: Copy WASM exec script
       shell: bash
       run: cp $(go env GOROOT)/misc/wasm/wasm_exec.js dist/web/.
     - name: Upload Web build
       uses: actions/upload-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-web
+        name: freefall-web
         path: |
           dist/web/
           LICENSE
@@ -119,25 +119,25 @@ jobs:
     - name: Download Windows binary
       uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-win
+        name: freefall-win
     - name: Download Linux binary
       uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-lin
+        name: freefall-lin
     - name: Download Mac binary
       uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-mac
+        name: freefall-mac
     - name: Upload beta testing bundle
       uses: actions/upload-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-bundle
+        name: freefall-bundle
         path: |
           README.md
           LICENSE
-          ebitengine-nokiajam-template-lin.tar.gz
-          ebitengine-nokiajam-template-mac.tar.gz
-          ebitengine-nokiajam-template.exe
+          freefall-lin.tar.gz
+          freefall-mac.tar.gz
+          freefall.exe
 
   deploy-win:
     name: Deploy Windows build to itch.io
@@ -147,14 +147,14 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-win
+        name: freefall-win
     - uses: josephbmanley/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
         CHANNEL: windows
-        ITCH_GAME: ebitengine-nokiajam-template
+        ITCH_GAME: freefall
         ITCH_USER: sinisterstuf
-        PACKAGE: ebitengine-nokiajam-template.exe
+        PACKAGE: freefall.exe
         VERSION: ${{github.ref_name}}
 
   deploy-mac:
@@ -165,17 +165,17 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-mac
+        name: freefall-mac
     - name: Extract tarball
       shell: bash
-      run: tar -zxvf ebitengine-nokiajam-template-mac.tar.gz
+      run: tar -zxvf freefall-mac.tar.gz
     - uses: josephbmanley/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
         CHANNEL: mac
-        ITCH_GAME: ebitengine-nokiajam-template
+        ITCH_GAME: freefall
         ITCH_USER: sinisterstuf
-        PACKAGE: ebitengine-nokiajam-template
+        PACKAGE: freefall
         VERSION: ${{github.ref_name}}
 
   deploy-lin:
@@ -186,17 +186,17 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-lin
+        name: freefall-lin
     - name: Extract tarball
       shell: bash
-      run: tar -zxvf ebitengine-nokiajam-template-lin.tar.gz
+      run: tar -zxvf freefall-lin.tar.gz
     - uses: josephbmanley/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
         CHANNEL: linux
-        ITCH_GAME: ebitengine-nokiajam-template
+        ITCH_GAME: freefall
         ITCH_USER: sinisterstuf
-        PACKAGE: ebitengine-nokiajam-template
+        PACKAGE: freefall
         VERSION: ${{github.ref_name}}
 
   deploy-web:
@@ -207,12 +207,12 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
       with:
-        name: ebitengine-nokiajam-template-web
+        name: freefall-web
     - uses: josephbmanley/butler-publish-itchio-action@master
       env:
         BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
         CHANNEL: web
-        ITCH_GAME: ebitengine-nokiajam-template
+        ITCH_GAME: freefall
         ITCH_USER: sinisterstuf
         PACKAGE: dist/web
         VERSION: ${{github.ref_name}}

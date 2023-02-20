@@ -1,22 +1,6 @@
-# ebitengine-nokiajam-template
+# freefall
 
-A basic skeleton for a 2D game using the [Ebitengine](https://ebitengine.org/) library.
-
------✂️-----
-
-> ⚠️ After cloning this repository:
-
-> Write your OWN name name in the LICENSE file and find-and-replace `ebitengine-nokiajam-template` with your own game's name, for example, by running this command (tested on Linux and Mac):
-
-```bash
-grep -Rl ebitengine-nokiajam-template | xargs sed -i '' -e "s/ebitengine-nokiajam-template/${PWD##*/}/g"
-```
-
-> it assumes that the game name is the name of the current folder because that is what `go build` will call it.
-
-> Then delete this section from the README, and start editing `main.go` to make your own game!
-
------✂️-----
+A WIP 2D game for the 2023 Nokia 3310 Jam using the [Ebitengine](https://ebitengine.org/) library.
 
 ## For game testers
 
@@ -31,8 +15,8 @@ Game controls:
 
 Make sure you have [Go 1.19 or later](https://go.dev/) to contribute to the game
 
-To build the game yourself, run: `go build .` it will produce an ebitengine-nokiajam-template file and on Windows ebitengine-nokiajam-template.exe.
+To build the game yourself, run: `go build .` it will produce an freefall file and on Windows freefall.exe.
 
-To run the tests, run: `go test ./...` but there are no tests yet.
+To run the tests, run: `go test ./...` assuming there even are any.
 
 The project has a very simple, flat structure, the first place to start looking is the main.go file.

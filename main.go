@@ -12,13 +12,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/sinisterstuf/ebitengine-nokiajam-template/nokia"
+	"github.com/sinisterstuf/freefall/nokia"
 )
 
 func main() {
 	windowScale := 10
 	ebiten.SetWindowSize(nokia.GameSize.X*windowScale, nokia.GameSize.Y*windowScale)
-	ebiten.SetWindowTitle("ebitengine-nokiajam-template")
+	ebiten.SetWindowTitle("Freefall")
 
 	game := &Game{
 		Size:   nokia.GameSize,

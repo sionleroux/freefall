@@ -1,4 +1,4 @@
-module github.com/sinisterstuf/ebitengine-nokiajam-template
+module github.com/sinisterstuf/freefall
 
 go 1.19
 
