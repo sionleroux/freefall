@@ -9,7 +9,7 @@ A WIP 2D game for the 2023 Nokia 3310 Jam using the [Ebitengine](https://ebiteng
 Game controls:
 - F: toggle full-screen
 - Q: quit the game
-- Space: move up
+- Space: toggle parachute
 
 ## For programmers
 

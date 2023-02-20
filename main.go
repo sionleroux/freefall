@@ -22,9 +22,11 @@ func main() {
 	ebiten.SetWindowTitle("Freefall")
 
 	game := &Game{
-		Size:   nokia.GameSize,
-		Player: &Player{image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2)},
-		Dusts:  Dusts{},
+		Size: nokia.GameSize,
+		Player: &Player{
+			Coords: image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2),
+		},
+		Dusts: Dusts{},
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
@@ -37,6 +39,7 @@ type Game struct {
 	Size   image.Point
 	Player *Player
 	Dusts  Dusts
+	Tick   int64
 }
 
 // Layout is hardcoded for now, may be made dynamic in future
@@ -46,6 +49,7 @@ func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, scr
 
 // Update calculates game logic
 func (g *Game) Update() error {
+	g.Tick++
 
 	// Pressing Q any time quits immediately
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
@@ -61,11 +65,17 @@ func (g *Game) Update() error {
 		}
 	}
 
-	g.Dusts.Update()
+	if g.Player.Chute {
+		if g.Tick%2 == 0 {
+			g.Dusts.Update()
+		}
+	} else {
+		g.Dusts.Update()
+	}
 
 	// Movement controls
-	if ebiten.IsKeyPressed(ebiten.KeySpace) {
-		g.Player.Move()
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		g.Player.Pull()
 	}
 
 	return nil
@@ -97,11 +107,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // Player is the player character in the game
 type Player struct {
 	Coords image.Point
+	Chute  bool
 }
 
 // Move moves the player upwards
-func (p *Player) Move() {
-	p.Coords.Y--
+func (p *Player) Pull() {
+	p.Chute = !p.Chute
 }
 
 // Dust is decorative dirt on the screen to give the illusion of motion
