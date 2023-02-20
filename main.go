@@ -142,6 +142,7 @@ func (ds *Dusts) Update() {
 	for i, d := range *ds {
 		d.Update()
 		if d.Coords.Y < 0 {
+			(*ds)[i] = nil
 			*ds = append((*ds)[:i], (*ds)[i+1:]...)
 		}
 	}
