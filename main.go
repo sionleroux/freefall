@@ -26,7 +26,8 @@ func main() {
 		Player: &Player{
 			Coords: image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2),
 		},
-		Dusts: Dusts{},
+		Dusts:       Dusts{},
+		Projectiles: Projectiles{},
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
@@ -36,10 +37,11 @@ func main() {
 
 // Game represents the main game state
 type Game struct {
-	Size   image.Point
-	Player *Player
-	Dusts  Dusts
-	Tick   int64
+	Size        image.Point
+	Player      *Player
+	Dusts       Dusts
+	Projectiles Projectiles
+	Tick        int64
 }
 
 // Layout is hardcoded for now, may be made dynamic in future
@@ -73,6 +75,8 @@ func (g *Game) Update() error {
 		g.Dusts.Update()
 	}
 
+	g.Projectiles.Update()
+
 	// Movement controls
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.Player.Pull()
@@ -90,6 +94,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			screen,
 			float64(d.Coords.X), float64(d.Coords.Y),
 			1, 1,
+			nokia.PaletteOriginal.Dark(),
+		)
+	}
+
+	for _, p := range g.Projectiles {
+		ebitenutil.DrawRect(
+			screen,
+			float64(p.Coords.X-9), float64(p.Coords.Y),
+			10, 1,
 			nokia.PaletteOriginal.Dark(),
 		)
 	}
@@ -148,6 +161,42 @@ func (ds *Dusts) Update() {
 func (ds *Dusts) Drop(i int) {
 	(*ds)[i] = nil
 	*ds = append((*ds)[:i], (*ds)[i+1:]...)
+}
+
+// Projectile is something that flies across the screen and causes damage if it
+// hits the box
+type Projectile struct {
+	Coords image.Point
+}
+
+func (p *Projectile) Update() {
+	p.Coords.Y--
+	p.Coords.X++
+}
+
+type Projectiles []*Projectile
+
+func (ps *Projectiles) Update() {
+	const maxProjectiles = 2
+
+	if len(*ps) < maxProjectiles {
+		psX := rand.Intn(nokia.GameSize.X)
+		*ps = append(*ps, &Projectile{
+			image.Pt(psX, nokia.GameSize.Y+1),
+		})
+	}
+
+	for i, p := range *ps {
+		p.Update()
+		if p.Coords.Y < 0 {
+			ps.Drop(i)
+		}
+	}
+}
+
+func (ps *Projectiles) Drop(i int) {
+	(*ps)[i] = nil
+	*ps = append((*ps)[:i], (*ps)[i+1:]...)
 }
 
 type Entity interface {
