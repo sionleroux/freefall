@@ -83,14 +83,14 @@ func (g *Game) Update() error {
 
 // Draw draws the game screen by one frame
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(nokia.PaletteOriginal.Dark())
+	screen.Fill(nokia.PaletteOriginal.Light())
 
 	for _, d := range g.Dusts {
 		ebitenutil.DrawRect(
 			screen,
 			float64(d.Coords.X), float64(d.Coords.Y),
 			1, 1,
-			nokia.PaletteOriginal.Light(),
+			nokia.PaletteOriginal.Dark(),
 		)
 	}
 
@@ -100,7 +100,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		float64(g.Player.Coords.Y),
 		5,
 		5,
-		nokia.PaletteOriginal.Light(),
+		nokia.PaletteOriginal.Dark(),
 	)
 }
 
