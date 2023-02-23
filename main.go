@@ -75,7 +75,21 @@ func (g *Game) Update() error {
 		g.Dusts.Update()
 	}
 
-	g.Projectiles.Update()
+	if g.Tick%2 == 0 {
+		g.Projectiles.Update()
+	}
+
+	playerHitbox := image.Rectangle{
+		g.Player.Coords.Add(image.Pt(-2, -2)),
+		g.Player.Coords.Add(image.Pt(2, 2)),
+	}
+
+	for _, p := range g.Projectiles {
+		if p.Coords.In(playerHitbox) {
+			// XXX 9 is magic
+			return errors.New("game over")
+		}
+	}
 
 	// Movement controls
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
@@ -101,7 +115,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for _, p := range g.Projectiles {
 		ebitenutil.DrawRect(
 			screen,
-			float64(p.Coords.X-9), float64(p.Coords.Y),
+			float64(p.Coords.X), float64(p.Coords.Y),
 			10, 1,
 			nokia.PaletteOriginal.Dark(),
 		)
