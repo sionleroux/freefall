@@ -23,7 +23,7 @@ func main() {
 
 	game := &Game{
 		Size: nokia.GameSize,
-		Player: &Player{
+		Box: &Box{
 			Coords: image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2),
 		},
 		Dusts:       Dusts{},
@@ -38,7 +38,7 @@ func main() {
 // Game represents the main game state
 type Game struct {
 	Size        image.Point
-	Player      *Player
+	Box         *Box
 	Dusts       Dusts
 	Projectiles Projectiles
 	Tick        int64
@@ -67,7 +67,7 @@ func (g *Game) Update() error {
 		}
 	}
 
-	if g.Player.Chute {
+	if g.Box.Chute {
 		if g.Tick%2 == 0 {
 			g.Dusts.Update()
 		}
@@ -80,8 +80,8 @@ func (g *Game) Update() error {
 	}
 
 	playerHitbox := image.Rectangle{
-		g.Player.Coords.Add(image.Pt(-2, -2)),
-		g.Player.Coords.Add(image.Pt(2, 2)),
+		g.Box.Coords.Add(image.Pt(-2, -2)),
+		g.Box.Coords.Add(image.Pt(2, 2)),
 	}
 
 	for _, p := range g.Projectiles {
@@ -93,7 +93,7 @@ func (g *Game) Update() error {
 
 	// Movement controls
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		g.Player.Pull()
+		g.Box.Pull()
 	}
 
 	return nil
@@ -123,23 +123,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	ebitenutil.DrawRect(
 		screen,
-		float64(g.Player.Coords.X),
-		float64(g.Player.Coords.Y),
+		float64(g.Box.Coords.X),
+		float64(g.Box.Coords.Y),
 		5,
 		5,
 		nokia.PaletteOriginal.Dark(),
 	)
 }
 
-// Player is the player character in the game
-type Player struct {
+// Box is the player character in the game
+type Box struct {
 	Coords image.Point
 	Chute  bool
 }
 
 // Move moves the player upwards
-func (p *Player) Pull() {
-	p.Chute = !p.Chute
+func (b *Box) Pull() {
+	b.Chute = !b.Chute
 }
 
 // Dust is decorative dirt on the screen to give the illusion of motion
