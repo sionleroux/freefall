@@ -6,7 +6,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"image"
 	"log"
 	"math/rand"
@@ -134,8 +133,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		float64(g.Box.HitBox.Dy()),
 		nokia.PaletteOriginal.Dark(),
 	)
-
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("slow: %v", g.Box.Chute))
 }
 
 // BoxSize is based on the box sprite visual dimensions
