@@ -23,9 +23,10 @@ func main() {
 
 	game := &Game{
 		Size: nokia.GameSize,
-		Box: &Box{
-			Coords: image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2),
-		},
+		Box: NewBox(
+			image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2),
+			BoxSize,
+		),
 		Dusts:       Dusts{},
 		Projectiles: Projectiles{},
 	}
@@ -79,14 +80,8 @@ func (g *Game) Update() error {
 		g.Projectiles.Update()
 	}
 
-	playerHitbox := image.Rectangle{
-		g.Box.Coords.Add(image.Pt(-2, -2)),
-		g.Box.Coords.Add(image.Pt(2, 2)),
-	}
-
 	for _, p := range g.Projectiles {
-		if p.Coords.In(playerHitbox) {
-			// XXX 9 is magic
+		if p.Coords.In(g.Box.HitBox) {
 			return errors.New("game over")
 		}
 	}
@@ -123,18 +118,35 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	ebitenutil.DrawRect(
 		screen,
-		float64(g.Box.Coords.X),
-		float64(g.Box.Coords.Y),
-		5,
-		5,
+		float64(g.Box.HitBox.Min.X),
+		float64(g.Box.HitBox.Max.Y),
+		float64(g.Box.HitBox.Dx()),
+		float64(g.Box.HitBox.Dy()),
 		nokia.PaletteOriginal.Dark(),
 	)
 }
+
+// BoxSize is based on the box sprite visual dimensions
+const BoxSize = 5
 
 // Box is the player character in the game
 type Box struct {
 	Coords image.Point
 	Chute  bool
+	size   int
+	HitBox image.Rectangle
+}
+
+func NewBox(coords image.Point, size int) *Box {
+	boxOffset := image.Pt(size/2, size/2)
+	return &Box{
+		Coords: coords,
+		size:   size,
+		HitBox: image.Rectangle{
+			coords.Sub(boxOffset),
+			coords.Add(boxOffset),
+		},
+	}
 }
 
 // Move moves the player upwards
