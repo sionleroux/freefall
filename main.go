@@ -21,6 +21,7 @@ func main() {
 	windowScale := 10
 	ebiten.SetWindowSize(nokia.GameSize.X*windowScale, nokia.GameSize.Y*windowScale)
 	ebiten.SetWindowTitle("Freefall")
+	ebiten.SetTPS(15)
 
 	game := &Game{
 		Size: nokia.GameSize,
