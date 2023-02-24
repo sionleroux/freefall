@@ -43,6 +43,7 @@ type Game struct {
 	Dusts       Dusts
 	Projectiles Projectiles
 	Tick        int64
+	TouchIDs    []ebiten.TouchID
 }
 
 // Layout is hardcoded for now, may be made dynamic in future
@@ -87,7 +88,14 @@ func (g *Game) Update() error {
 	}
 
 	// Movement controls
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	// Main action button is 5, like in the middle of a Nokia 3310
+	// Fallbacks for people without a numpad:
+	//   * Spacebar on desktop
+	//   * Tap the screen on mobile
+	g.TouchIDs = inpututil.AppendJustPressedTouchIDs(g.TouchIDs[:0])
+	if inpututil.IsKeyJustPressed(ebiten.KeyNumpad5) ||
+		inpututil.IsKeyJustPressed(ebiten.KeySpace) ||
+		len(g.TouchIDs) > 0 {
 		g.Box.Pull()
 	}
 
