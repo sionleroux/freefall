@@ -6,6 +6,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"log"
 	"math/rand"
@@ -83,8 +84,12 @@ func (g *Game) Update() error {
 	}
 
 	for _, p := range g.Projectiles {
-		if p.Coords.In(g.Box.HitBox) {
-			return errors.New("game over")
+		ProjHitBox := image.Rectangle{
+			p.Coords,
+			p.Coords.Add(image.Pt(ProjSize, ProjSize)),
+		}
+		if g.Box.HitBox.Overlaps(ProjHitBox) {
+			return errors.New(fmt.Sprintf("game over: %v hit %v", ProjHitBox, g.Box.HitBox))
 		}
 	}
 
@@ -198,10 +203,12 @@ func (ds *Dusts) Drop(i int) {
 type Projectile struct {
 	Coords image.Point
 	Tail   int
+	Size   int
 }
 
 const TailMax = 10 // Maximum length of projectile tail
 const TailDist = 1 // Distance between projectile and tail
+const ProjSize = 2 // How big a projectile's hitbox is
 
 func (p *Projectile) Update() {
 	p.Coords.Y--
@@ -215,7 +222,7 @@ func (p *Projectile) Draw(screen *ebiten.Image) {
 	ebitenutil.DrawRect(
 		screen,
 		float64(p.Coords.X), float64(p.Coords.Y),
-		2, 2,
+		ProjSize, ProjSize,
 		nokia.PaletteOriginal.Dark(),
 	)
 	if p.Tail > 0 {
@@ -237,6 +244,7 @@ func (ps *Projectiles) Update() {
 		psX := rand.Intn(nokia.GameSize.X)
 		*ps = append(*ps, &Projectile{
 			Coords: image.Pt(psX, nokia.GameSize.Y+1),
+			Size:   ProjSize,
 		})
 	}
 
