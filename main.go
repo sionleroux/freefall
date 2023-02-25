@@ -117,12 +117,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	for _, p := range g.Projectiles {
-		ebitenutil.DrawRect(
-			screen,
-			float64(p.Coords.X), float64(p.Coords.Y),
-			10, 1,
-			nokia.PaletteOriginal.Dark(),
-		)
+		p.Draw(screen)
 	}
 
 	ebitenutil.DrawRect(
@@ -202,11 +197,35 @@ func (ds *Dusts) Drop(i int) {
 // hits the box
 type Projectile struct {
 	Coords image.Point
+	Tail   int
 }
+
+const TailMax = 10 // Maximum length of projectile tail
+const TailDist = 1 // Distance between projectile and tail
 
 func (p *Projectile) Update() {
 	p.Coords.Y--
 	p.Coords.X++
+	if p.Tail < TailMax {
+		p.Tail++
+	}
+}
+
+func (p *Projectile) Draw(screen *ebiten.Image) {
+	ebitenutil.DrawRect(
+		screen,
+		float64(p.Coords.X), float64(p.Coords.Y),
+		2, 2,
+		nokia.PaletteOriginal.Dark(),
+	)
+	if p.Tail > 0 {
+		ebitenutil.DrawLine(
+			screen,
+			float64(p.Coords.X-TailDist), float64(p.Coords.Y+1),
+			float64(p.Coords.X-TailDist-p.Tail), float64(p.Coords.Y+1),
+			nokia.PaletteOriginal.Dark(),
+		)
+	}
 }
 
 type Projectiles []*Projectile
@@ -217,7 +236,7 @@ func (ps *Projectiles) Update() {
 	if len(*ps) < maxProjectiles {
 		psX := rand.Intn(nokia.GameSize.X)
 		*ps = append(*ps, &Projectile{
-			image.Pt(psX, nokia.GameSize.Y+1),
+			Coords: image.Pt(psX, nokia.GameSize.Y+1),
 		})
 	}
 
