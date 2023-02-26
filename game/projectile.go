@@ -49,6 +49,12 @@ func (p *Projectile) Draw(screen *ebiten.Image) {
 
 type Projectiles []*Projectile
 
+func (ps *Projectiles) Draw(screen *ebiten.Image) {
+	for _, p := range *ps {
+		p.Draw(screen)
+	}
+}
+
 func (ps *Projectiles) Update() {
 	const maxProjectiles = 2
 

@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/sinisterstuf/freefall/nokia"
 )
 
@@ -96,27 +95,9 @@ func (g *GameScreen) Update() error {
 }
 
 func (g *GameScreen) Draw(screen *ebiten.Image) {
-	for _, d := range g.Dusts {
-		ebitenutil.DrawRect(
-			screen,
-			float64(d.Coords.X), float64(d.Coords.Y),
-			1, 1,
-			nokia.PaletteOriginal.Dark(),
-		)
-	}
-
-	for _, p := range g.Projectiles {
-		p.Draw(screen)
-	}
-
-	ebitenutil.DrawRect(
-		screen,
-		float64(g.Box.HitBox.Min.X),
-		float64(g.Box.HitBox.Max.Y),
-		float64(g.Box.HitBox.Dx()),
-		float64(g.Box.HitBox.Dy()),
-		nokia.PaletteOriginal.Dark(),
-	)
+	g.Dusts.Draw(screen)
+	g.Projectiles.Draw(screen)
+	g.Box.Draw(screen)
 }
 
 func NewGameScreen(touchIDs *[]ebiten.TouchID) *GameScreen {

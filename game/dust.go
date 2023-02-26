@@ -4,6 +4,8 @@ import (
 	"image"
 	"math/rand"
 
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/sinisterstuf/freefall/nokia"
 )
 
@@ -18,6 +20,17 @@ func (d *Dust) Update() {
 }
 
 type Dusts []*Dust
+
+func (ds *Dusts) Draw(screen *ebiten.Image) {
+	for _, d := range *ds {
+		ebitenutil.DrawRect(
+			screen,
+			float64(d.Coords.X), float64(d.Coords.Y),
+			1, 1,
+			nokia.PaletteOriginal.Dark(),
+		)
+	}
+}
 
 func (ds *Dusts) Update() {
 	const maxDusts = 5
