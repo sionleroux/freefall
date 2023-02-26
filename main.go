@@ -14,6 +14,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/sinisterstuf/freefall/assets"
 	"github.com/sinisterstuf/freefall/nokia"
 )
 
@@ -31,12 +32,21 @@ func main() {
 		),
 		Dusts:       Dusts{},
 		Projectiles: Projectiles{},
+		TitleScreen: assets.LoadImage("title-screen.png"),
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
 }
+
+// Types of screens/scenes in the game
+type screen int
+
+const (
+	ScreenTitle screen = iota // Shows when the game first starts
+	ScreenGame                // The actual game itself
+)
 
 // Game represents the main game state
 type Game struct {
@@ -46,6 +56,8 @@ type Game struct {
 	Projectiles Projectiles
 	Tick        int64
 	TouchIDs    []ebiten.TouchID
+	TitleScreen *ebiten.Image
+	Screen      screen
 }
 
 // Layout is hardcoded for now, may be made dynamic in future
@@ -56,6 +68,9 @@ func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, scr
 // Update calculates game logic
 func (g *Game) Update() error {
 	g.Tick++
+
+	// This should only be needed once per update
+	g.TouchIDs = inpututil.AppendJustPressedTouchIDs(g.TouchIDs[:0])
 
 	// Pressing Q any time quits immediately
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
@@ -69,6 +84,13 @@ func (g *Game) Update() error {
 		} else {
 			ebiten.SetFullscreen(true)
 		}
+	}
+
+	if g.Screen == ScreenTitle {
+		if IsMainActionButtonPressed(g.TouchIDs) {
+			g.Screen++
+		}
+		return nil
 	}
 
 	if g.Box.Chute {
@@ -94,23 +116,34 @@ func (g *Game) Update() error {
 	}
 
 	// Movement controls
-	// Main action button is 5, like in the middle of a Nokia 3310
-	// Fallbacks for people without a numpad:
-	//   * Spacebar on desktop
-	//   * Tap the screen on mobile
-	g.TouchIDs = inpututil.AppendJustPressedTouchIDs(g.TouchIDs[:0])
-	if inpututil.IsKeyJustPressed(ebiten.KeyNumpad5) ||
-		inpututil.IsKeyJustPressed(ebiten.KeySpace) ||
-		len(g.TouchIDs) > 0 {
+	if IsMainActionButtonPressed(g.TouchIDs) {
 		g.Box.Pull()
 	}
 
 	return nil
 }
 
+// Main action button is 5, like in the middle of a Nokia 3310
+// Fallbacks for people without a numpad:
+//   - Spacebar on desktop
+//   - Tap the screen on mobile
+func IsMainActionButtonPressed(TouchIDs []ebiten.TouchID) bool {
+	if inpututil.IsKeyJustPressed(ebiten.KeyNumpad5) ||
+		inpututil.IsKeyJustPressed(ebiten.KeySpace) ||
+		len(TouchIDs) > 0 {
+		return true
+	}
+	return false
+}
+
 // Draw draws the game screen by one frame
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(nokia.PaletteOriginal.Light())
+
+	if g.Screen == ScreenTitle {
+		screen.DrawImage(g.TitleScreen, &ebiten.DrawImageOptions{})
+		return
+	}
 
 	for _, d := range g.Dusts {
 		ebitenutil.DrawRect(
