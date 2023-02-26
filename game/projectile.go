@@ -13,9 +13,10 @@ import (
 // Projectile is something that flies across the screen and causes damage if it
 // hits the box
 type Projectile struct {
-	Coords image.Point
-	Tail   int
-	Size   int
+	Coords   image.Point
+	Tail     int
+	Size     int
+	Velocity int
 }
 
 const TailMax = 10 // Maximum length of projectile tail
@@ -24,7 +25,7 @@ const ProjSize = 2 // How big a projectile's hitbox is
 
 func (p *Projectile) Update() {
 	p.Coords.Y--
-	p.Coords.X++
+	p.Coords.X = p.Coords.X + p.Velocity
 	if p.Tail < TailMax {
 		p.Tail++
 	}
@@ -40,8 +41,8 @@ func (p *Projectile) Draw(screen *ebiten.Image) {
 	if p.Tail > 0 {
 		ebitenutil.DrawLine(
 			screen,
-			float64(p.Coords.X-TailDist), float64(p.Coords.Y+1),
-			float64(p.Coords.X-TailDist-p.Tail), float64(p.Coords.Y+1),
+			float64(p.Coords.X-(ProjSize+TailDist)*p.Velocity), float64(p.Coords.Y+1),
+			float64(p.Coords.X-(ProjSize+TailDist+p.Tail)*p.Velocity), float64(p.Coords.Y+1),
 			nokia.PaletteOriginal.Dark(),
 		)
 	}
@@ -59,10 +60,17 @@ func (ps *Projectiles) Update() {
 	const maxProjectiles = 2
 
 	if len(*ps) < maxProjectiles {
-		psX := rand.Intn(nokia.GameSize.X)
+		spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
+		var velocity int
+		if spawnSide == 0 {
+			velocity = 1
+		} else {
+			velocity = -1
+		}
 		*ps = append(*ps, &Projectile{
-			Coords: image.Pt(psX, nokia.GameSize.Y+1),
-			Size:   ProjSize,
+			Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
+			Size:     ProjSize,
+			Velocity: velocity,
 		})
 	}
 
