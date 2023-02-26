@@ -15,7 +15,9 @@ type Dust struct {
 }
 
 func (d *Dust) Update() {
-	// Move dusts up
+}
+
+func (d *Dust) MoveUp() {
 	d.Coords.Y--
 }
 
@@ -47,6 +49,12 @@ func (ds *Dusts) Update() {
 		if d.Coords.Y < 0 {
 			ds.Drop(i)
 		}
+	}
+}
+
+func (ds *Dusts) MoveUp() {
+	for _, d := range *ds {
+		d.MoveUp()
 	}
 }
 

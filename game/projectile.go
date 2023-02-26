@@ -24,11 +24,14 @@ const TailDist = 1 // Distance between projectile and tail
 const ProjSize = 2 // How big a projectile's hitbox is
 
 func (p *Projectile) Update() {
-	p.Coords.Y--
 	p.Coords.X = p.Coords.X + p.Velocity
 	if p.Tail < TailMax {
 		p.Tail++
 	}
+}
+
+func (p *Projectile) MoveUp() {
+	p.Coords.Y--
 }
 
 func (p *Projectile) Draw(screen *ebiten.Image) {
@@ -79,6 +82,12 @@ func (ps *Projectiles) Update() {
 		if p.Coords.Y < 0 {
 			ps.Drop(i)
 		}
+	}
+}
+
+func (ps *Projectiles) MoveUp() {
+	for _, p := range *ps {
+		p.MoveUp()
 	}
 }
 

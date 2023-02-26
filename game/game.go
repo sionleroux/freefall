@@ -65,15 +65,16 @@ func (g *GameScreen) Update() error {
 
 	if g.Box.Chute {
 		if g.Tick%2 == 0 {
-			g.Dusts.Update()
+			g.Dusts.MoveUp()
+			g.Projectiles.MoveUp()
 		}
 	} else {
-		g.Dusts.Update()
+		g.Dusts.MoveUp()
+		g.Projectiles.MoveUp()
 	}
 
-	if g.Tick%2 == 0 {
-		g.Projectiles.Update()
-	}
+	g.Dusts.Update()
+	g.Projectiles.Update()
 
 	for _, p := range g.Projectiles {
 		ProjHitBox := image.Rectangle{
