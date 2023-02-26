@@ -59,7 +59,7 @@ func (ps *Projectiles) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (ps *Projectiles) Update() {
+func (ps *Projectiles) Update(tick int64) {
 	const maxProjectiles = 2
 
 	if len(*ps) < maxProjectiles {
@@ -68,7 +68,7 @@ func (ps *Projectiles) Update() {
 		if spawnSide == 0 {
 			velocity = 1
 		} else {
-			velocity = -1
+			velocity = -2
 		}
 		*ps = append(*ps, &Projectile{
 			Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
@@ -78,7 +78,9 @@ func (ps *Projectiles) Update() {
 	}
 
 	for i, p := range *ps {
-		p.Update()
+		if tick%2 == 0 {
+			p.Update()
+		}
 		if p.Coords.Y < 0 {
 			ps.Drop(i)
 		}

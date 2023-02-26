@@ -74,7 +74,7 @@ func (g *GameScreen) Update() error {
 	}
 
 	g.Dusts.Update()
-	g.Projectiles.Update()
+	g.Projectiles.Update(g.Tick)
 
 	for _, p := range g.Projectiles {
 		ProjHitBox := image.Rectangle{
