@@ -103,7 +103,7 @@ func (g *GameScreen) Draw(screen *ebiten.Image) {
 func NewGameScreen(touchIDs *[]ebiten.TouchID) *GameScreen {
 	return &GameScreen{
 		Box: NewBox(
-			image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/2),
+			image.Pt(nokia.GameSize.X/2, nokia.GameSize.Y/8),
 			BoxSize,
 		),
 		Dusts:       Dusts{},
