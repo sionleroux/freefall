@@ -1,10 +1,11 @@
-# freefall
+# Freefall
 
 Landing humanitarian airdrops in hostile territory, control the parachute to avoid fire while you fall.
 
 **Download or play in browser at: https://sinisterstuf.itch.io/freefall**
 
 This is my entry to this year's [Nokia 3310 Jam](https://itch.io/jam/nokiajam5).
+
 
 ## For game testers
 
@@ -15,6 +16,9 @@ Game controls:
 - Q: quit the game
 - Space / Numpad 5 / Tap screen: toggle parachute
 
+[![Freefall social preview](artwork/social-preview.png)](https://sinisterstuf.itch.io/freefall)
+
+
 ## For programmers
 
 Make sure you have [Go 1.19 or later](https://go.dev/) to contribute to the game
@@ -24,6 +28,7 @@ To build the game yourself, run: `go build .` it will produce an freefall file a
 To run the tests, run: `go test ./...` assuming there even are any.
 
 The project has a very simple, flat structure, the first place to start looking is the main.go file.
+
 
 ## Attribution
 
