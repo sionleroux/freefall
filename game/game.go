@@ -6,8 +6,13 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/sinisterstuf/freefall/assets"
 	"github.com/sinisterstuf/freefall/nokia"
 )
+
+const sampleRate int = 44100 // assuming "normal" sample rate
+var Context *audio.Context
 
 // Types of screens/scenes in the game
 type Screen int
@@ -38,6 +43,15 @@ type Entity interface {
 type TitleScreen struct {
 	Background *ebiten.Image
 	TouchIDs   *[]ebiten.TouchID
+	Music      *audio.Player
+}
+
+func NewTitleScreen(touchIDs *[]ebiten.TouchID) *TitleScreen {
+	return &TitleScreen{
+		Background: assets.LoadImage("title-screen.png"),
+		Music:      assets.NewMusicPlayer(assets.LoadSoundFile("freefall-maintheme.ogg", sampleRate), Context),
+		TouchIDs:   touchIDs,
+	}
 }
 
 func (t *TitleScreen) Update() error {

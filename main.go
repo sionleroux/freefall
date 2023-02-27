@@ -10,11 +10,13 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/sinisterstuf/freefall/assets"
 	"github.com/sinisterstuf/freefall/game"
 	"github.com/sinisterstuf/freefall/nokia"
 )
+
+const sampleRate int = 44100 // assuming "normal" sample rate
 
 func main() {
 	windowScale := 10
@@ -23,20 +25,21 @@ func main() {
 	ebiten.SetTPS(15)
 
 	TouchIDs := []ebiten.TouchID{}
+	game.Context = audio.NewContext(sampleRate)
 
-	game := &Game{
+	titleScreen := game.NewTitleScreen(&TouchIDs)
+	titleScreen.Music.Play()
+
+	g := &Game{
 		Size: nokia.GameSize,
 		Screens: []game.Entity{
-			&game.TitleScreen{
-				Background: assets.LoadImage("title-screen.png"),
-				TouchIDs:   &TouchIDs,
-			},
+			titleScreen,
 			game.NewGameScreen(&TouchIDs),
 		},
 		TouchIDs: &TouchIDs,
 	}
 
-	if err := ebiten.RunGame(game); err != nil {
+	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
 }

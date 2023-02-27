@@ -19,7 +19,7 @@ import (
 	"github.com/tinne26/etxt"
 )
 
-//go:embed *.png *.json
+//go:embed *.png *.json *.ogg
 var assets embed.FS
 
 // Frame is a single frame of an animation, usually a sub-image of a larger
