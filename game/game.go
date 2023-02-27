@@ -56,7 +56,7 @@ type GameScreen struct {
 	Box         *Box
 	Dusts       Dusts
 	Projectiles Projectiles
-	Tick        int64
+	Tick        int
 	TouchIDs    *[]ebiten.TouchID
 }
 

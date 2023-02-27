@@ -16,7 +16,8 @@ type Projectile struct {
 	Coords   image.Point
 	Tail     int
 	Size     int
-	Velocity int
+	Velocity int // Direction and speed
+	Spacing  int // How far away to place the next one
 }
 
 const TailMax = 10 // Maximum length of projectile tail
@@ -59,22 +60,15 @@ func (ps *Projectiles) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (ps *Projectiles) Update(tick int64) {
-	const maxProjectiles = 2
+const maxProjectiles = 5
 
-	if len(*ps) < maxProjectiles {
-		spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
-		var velocity int
-		if spawnSide == 0 {
-			velocity = 1
-		} else {
-			velocity = -2
-		}
-		*ps = append(*ps, &Projectile{
-			Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
-			Size:     ProjSize,
-			Velocity: velocity,
-		})
+func (ps *Projectiles) Update(tick int) {
+	if len(*ps) == 0 {
+		ps.Spawn(tick)
+	}
+
+	if len(*ps) < maxProjectiles && tick > (*ps)[len(*ps)-1].Spacing {
+		ps.Spawn(tick)
 	}
 
 	for i, p := range *ps {
@@ -85,6 +79,22 @@ func (ps *Projectiles) Update(tick int64) {
 			ps.Drop(i)
 		}
 	}
+}
+
+func (ps *Projectiles) Spawn(tick int) {
+	spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
+	var velocity int
+	if spawnSide == 0 {
+		velocity = 1
+	} else {
+		velocity = -2
+	}
+	*ps = append(*ps, &Projectile{
+		Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
+		Size:     ProjSize,
+		Velocity: velocity,
+		Spacing:  tick + rand.Intn(20),
+	})
 }
 
 func (ps *Projectiles) MoveUp() {
