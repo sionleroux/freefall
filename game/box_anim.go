@@ -6,8 +6,8 @@ package game
 type boxAnimationTags uint8
 
 const (
-	boxOpening boxAnimationTags = iota
-	boxClosed
-	boxClosing
+	boxClosed boxAnimationTags = iota
+	boxOpening
 	boxOpen
+	boxClosing
 )

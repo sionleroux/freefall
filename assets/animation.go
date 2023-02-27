@@ -12,11 +12,6 @@ func Animate(frame, tick int, ft FrameTags) int {
 		return from
 	}
 
-	// Update only in every 5th cycle
-	if tick%5 != 0 {
-		return frame
-	}
-
 	// Continuously increase the Frame counter between from and to
 	return frame + 1
 }
