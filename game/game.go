@@ -127,6 +127,13 @@ func (g *GameScreen) Update() error {
 		g.Projectiles.MoveUp()
 	}
 
+	// Difficulty
+	if g.Tick%100 == 0 {
+		if maxProjectiles < 20 {
+			maxProjectiles += 2
+		}
+	}
+
 	g.Dusts.Update()
 	g.Projectiles.Update(g.Tick)
 

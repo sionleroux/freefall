@@ -60,7 +60,7 @@ func (ps *Projectiles) Draw(screen *ebiten.Image) {
 	}
 }
 
-const maxProjectiles = 10
+var maxProjectiles = 2
 
 func (ps *Projectiles) Update(tick int) {
 	if len(*ps) == 0 {
