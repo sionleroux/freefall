@@ -85,11 +85,12 @@ const maxSpacing = 15
 
 func (ps *Projectiles) Spawn(tick int) {
 	spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
+	speed := rand.Intn(2) + 1
 	var velocity int
 	if spawnSide == 0 {
-		velocity = 1
+		velocity = speed
 	} else {
-		velocity = -2
+		velocity = -speed
 	}
 	*ps = append(*ps, &Projectile{
 		Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
