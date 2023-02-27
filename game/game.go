@@ -45,6 +45,7 @@ type TitleScreen struct {
 	TouchIDs   *[]ebiten.TouchID
 	Music      *audio.Player
 	SFXFall    *audio.Player
+	Box        *Box
 }
 
 func NewTitleScreen(touchIDs *[]ebiten.TouchID) *TitleScreen {
@@ -53,13 +54,23 @@ func NewTitleScreen(touchIDs *[]ebiten.TouchID) *TitleScreen {
 		Music:      assets.NewMusicPlayer(assets.LoadSoundFile("freefall-maintheme.ogg", sampleRate), Context),
 		SFXFall:    assets.NewSoundPlayer(assets.LoadSoundFile("sfxfall.ogg", sampleRate), Context),
 		TouchIDs:   touchIDs,
+		Box: NewBox(
+			image.Pt(nokia.GameSize.X/2, -BoxSize),
+			BoxSize,
+		),
 	}
 }
 
 func (t *TitleScreen) Update() error {
 	if !t.Music.IsPlaying() {
 		t.Music.Play()
+		t.Box.Coords.Y = -BoxSize * 2
 	}
+
+	if t.Box.Coords.Y < nokia.GameSize.Y+BoxSize*2 {
+		t.Box.Coords.Y++
+	}
+	t.Box.Frame = assets.Animate(t.Box.Frame, t.Box.Tick, t.Box.Sprite.Meta.FrameTags[t.Box.State])
 
 	if IsMainActionButtonPressed(t.TouchIDs) {
 		t.Music.Pause()
@@ -73,6 +84,7 @@ func (t *TitleScreen) Update() error {
 
 func (t *TitleScreen) Draw(screen *ebiten.Image) {
 	screen.DrawImage(t.Background, &ebiten.DrawImageOptions{})
+	t.Box.Draw(screen)
 }
 
 // GameScreen represents state for the game proper
