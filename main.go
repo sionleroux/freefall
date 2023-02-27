@@ -58,8 +58,7 @@ func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, scr
 func (g *Game) Update() error {
 
 	// This should only be needed once per update
-	// g.TouchIDs = inpututil.AppendJustPressedTouchIDs(g.TouchIDs[:0])
-	inpututil.AppendJustPressedTouchIDs((*g.TouchIDs)[:0])
+	*g.TouchIDs = inpututil.AppendJustPressedTouchIDs((*g.TouchIDs)[:0])
 
 	// Pressing Q any time quits immediately
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
