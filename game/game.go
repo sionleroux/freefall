@@ -95,7 +95,7 @@ func (t *TitleScreen) Draw(screen *ebiten.Image) {
 		txt := t.TextRenderer
 		txt.SetTarget(screen)
 		txt.Draw(
-			fmt.Sprintf("High: %dm", HighScore),
+			fmt.Sprintf("Best: %dm", HighScore),
 			screen.Bounds().Dx()/2,
 			screen.Bounds().Dy()/8*7,
 		)
