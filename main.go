@@ -27,13 +27,10 @@ func main() {
 	TouchIDs := []ebiten.TouchID{}
 	game.Context = audio.NewContext(sampleRate)
 
-	titleScreen := game.NewTitleScreen(&TouchIDs)
-	titleScreen.Music.Play()
-
 	g := &Game{
 		Size: nokia.GameSize,
 		Screens: []game.Entity{
-			titleScreen,
+			game.NewTitleScreen(&TouchIDs),
 			game.NewGameScreen(&TouchIDs),
 		},
 		TouchIDs: &TouchIDs,

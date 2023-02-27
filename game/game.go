@@ -44,18 +44,28 @@ type TitleScreen struct {
 	Background *ebiten.Image
 	TouchIDs   *[]ebiten.TouchID
 	Music      *audio.Player
+	SFXFall    *audio.Player
 }
 
 func NewTitleScreen(touchIDs *[]ebiten.TouchID) *TitleScreen {
 	return &TitleScreen{
 		Background: assets.LoadImage("title-screen.png"),
 		Music:      assets.NewMusicPlayer(assets.LoadSoundFile("freefall-maintheme.ogg", sampleRate), Context),
+		SFXFall:    assets.NewSoundPlayer(assets.LoadSoundFile("sfxfall.ogg", sampleRate), Context),
 		TouchIDs:   touchIDs,
 	}
 }
 
 func (t *TitleScreen) Update() error {
+	if !t.Music.IsPlaying() {
+		t.Music.Play()
+	}
+
 	if IsMainActionButtonPressed(t.TouchIDs) {
+		t.Music.Pause()
+		t.Music.Rewind()
+		t.SFXFall.Rewind()
+		t.SFXFall.Play()
 		return &EOS{ScreenGame}
 	}
 	return nil
@@ -72,6 +82,7 @@ type GameScreen struct {
 	Projectiles Projectiles
 	Tick        int
 	TouchIDs    *[]ebiten.TouchID
+	SFXHit      *audio.Player
 }
 
 func (g *GameScreen) Update() error {
@@ -99,6 +110,8 @@ func (g *GameScreen) Update() error {
 		}
 		if g.Box.HitBox.Overlaps(ProjHitBox) {
 			log.Printf("game over: %v hit %v", ProjHitBox, g.Box.HitBox)
+			g.SFXHit.Rewind()
+			g.SFXHit.Play()
 			return &EOS{ScreenTitle}
 		}
 	}
@@ -126,5 +139,6 @@ func NewGameScreen(touchIDs *[]ebiten.TouchID) *GameScreen {
 		Dusts:       Dusts{},
 		Projectiles: Projectiles{},
 		TouchIDs:    touchIDs,
+		SFXHit:      assets.NewSoundPlayer(assets.LoadSoundFile("sfxhit.ogg", sampleRate), Context),
 	}
 }
