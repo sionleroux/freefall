@@ -1,6 +1,10 @@
 # freefall
 
-A WIP 2D game for the 2023 Nokia 3310 Jam using the [Ebitengine](https://ebitengine.org/) library.
+Landing humanitarian airdrops in hostile territory, control the parachute to avoid fire while you fall.
+
+**Download or play in browser at: https://sinisterstuf.itch.io/freefall**
+
+This is my entry to this year's [Nokia 3310 Jam](https://itch.io/jam/nokiajam5).
 
 ## For game testers
 
@@ -9,7 +13,7 @@ A WIP 2D game for the 2023 Nokia 3310 Jam using the [Ebitengine](https://ebiteng
 Game controls:
 - F: toggle full-screen
 - Q: quit the game
-- Space: toggle parachute
+- Space / Numpad 5 / Tap screen: toggle parachute
 
 ## For programmers
 
@@ -23,4 +27,4 @@ The project has a very simple, flat structure, the first place to start looking 
 
 ## Attribution
 
-The game music was made in LMMS using the nokia_3310_soundfont2.sf2 made by Krasno using samples imitating Nokia 3310 sounds made by Eamonn Watt.
+This game was written using the [Ebitengine](https://ebitengine.org/) library. The graphics and animations were drawn in [Aseprite](https://www.aseprite.org/). The music was written in [LMMS](https://lmms.io/) using the nokia_3310_soundfont2.sf2 made by Krasno using samples imitating Nokia 3310 sounds made by Eamonn Watt.
