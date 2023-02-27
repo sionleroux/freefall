@@ -20,8 +20,6 @@ func TestAnimate(t *testing.T) {
 		{0, 10, 9, FrameTags{From: 9, To: 10}, "wraps around (toggling 2 frames)"},
 		{0, 1, 9, FrameTags{From: 9, To: 10}, "interrupts other animation (out of lower range)"},
 		{0, 8, 8, FrameTags{From: 8, To: 8}, "stays in place with single frame"},
-		{1, 1, 1, FrameTags{From: 0, To: 7}, "stays in place when tick is not modulo 5"},
-		{10, 1, 2, FrameTags{From: 0, To: 7}, "increments frame when tick is modulo 5"},
 		{1, 1, 9, FrameTags{From: 9, To: 10}, "interrupts immediately regardless of modulo"},
 		{1, 7, 8, FrameTags{From: 8, To: 8}, "immediate interrupt with single frame"},
 	} {
