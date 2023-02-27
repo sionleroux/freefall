@@ -9,10 +9,14 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/sinisterstuf/freefall/assets"
 	"github.com/sinisterstuf/freefall/nokia"
+	"github.com/tinne26/etxt"
 )
 
 const sampleRate int = 44100 // assuming "normal" sample rate
 var Context *audio.Context
+
+// Using globals vs meeting deadlines
+var HighScore int = 0
 
 // Types of screens/scenes in the game
 type Screen int
@@ -41,11 +45,12 @@ type Entity interface {
 }
 
 type TitleScreen struct {
-	Background *ebiten.Image
-	TouchIDs   *[]ebiten.TouchID
-	Music      *audio.Player
-	SFXFall    *audio.Player
-	Box        *Box
+	Background   *ebiten.Image
+	TouchIDs     *[]ebiten.TouchID
+	Music        *audio.Player
+	SFXFall      *audio.Player
+	Box          *Box
+	TextRenderer *etxt.Renderer
 }
 
 func NewTitleScreen(touchIDs *[]ebiten.TouchID) *TitleScreen {
@@ -58,6 +63,7 @@ func NewTitleScreen(touchIDs *[]ebiten.TouchID) *TitleScreen {
 			image.Pt(nokia.GameSize.X/2, -BoxSize),
 			BoxSize,
 		),
+		TextRenderer: NewTextRenderer(),
 	}
 }
 
@@ -85,6 +91,15 @@ func (t *TitleScreen) Update() error {
 func (t *TitleScreen) Draw(screen *ebiten.Image) {
 	screen.DrawImage(t.Background, &ebiten.DrawImageOptions{})
 	t.Box.Draw(screen)
+	if HighScore > 0 {
+		txt := t.TextRenderer
+		txt.SetTarget(screen)
+		txt.Draw(
+			fmt.Sprintf("High: %dm", HighScore),
+			screen.Bounds().Dx()/2,
+			screen.Bounds().Dy()/8*7,
+		)
+	}
 }
 
 // GameScreen represents state for the game proper
@@ -122,6 +137,9 @@ func (g *GameScreen) Update() error {
 		}
 		if g.Box.HitBox.Overlaps(ProjHitBox) {
 			log.Printf("game over: %v hit %v", ProjHitBox, g.Box.HitBox)
+			if g.Tick > HighScore {
+				HighScore = g.Tick
+			}
 			g.SFXHit.Rewind()
 			g.SFXHit.Play()
 			return &EOS{ScreenTitle}
@@ -153,4 +171,14 @@ func NewGameScreen(touchIDs *[]ebiten.TouchID) *GameScreen {
 		TouchIDs:    touchIDs,
 		SFXHit:      assets.NewSoundPlayer(assets.LoadSoundFile("sfxhit.ogg", sampleRate), Context),
 	}
+}
+
+func NewTextRenderer() *etxt.Renderer {
+	font := assets.LoadFont("tiny.ttf")
+	r := etxt.NewStdRenderer()
+	r.SetFont(font)
+	r.SetAlign(etxt.YCenter, etxt.XCenter)
+	r.SetColor(nokia.PaletteOriginal.Dark())
+	r.SetSizePx(6)
+	return r
 }
