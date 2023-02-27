@@ -60,7 +60,7 @@ func (ps *Projectiles) Draw(screen *ebiten.Image) {
 	}
 }
 
-const maxProjectiles = 5
+const maxProjectiles = 10
 
 func (ps *Projectiles) Update(tick int) {
 	if len(*ps) == 0 {
@@ -81,6 +81,8 @@ func (ps *Projectiles) Update(tick int) {
 	}
 }
 
+const maxSpacing = 15
+
 func (ps *Projectiles) Spawn(tick int) {
 	spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
 	var velocity int
@@ -93,7 +95,7 @@ func (ps *Projectiles) Spawn(tick int) {
 		Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
 		Size:     ProjSize,
 		Velocity: velocity,
-		Spacing:  tick + rand.Intn(20),
+		Spacing:  tick + rand.Intn(maxSpacing),
 	})
 }
 
