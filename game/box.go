@@ -1,11 +1,12 @@
 package game
 
+//go:generate ../tools/gen_sprite_tags.sh ../assets/box.json box_anim.go box
+
 import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/sinisterstuf/freefall/nokia"
+	"github.com/sinisterstuf/freefall/assets"
 )
 
 // BoxSize is based on the box sprite visual dimensions
@@ -17,20 +18,50 @@ type Box struct {
 	Chute  bool
 	size   int
 	HitBox image.Rectangle
+	State  boxAnimationTags // Current animation state
+	Frame  int              // Current animation frame
+	Sprite *assets.SpriteSheet
+	Tick   int
 }
 
 func (b *Box) Update() error {
-	panic("not implemented") // TODO: Implement
+	b.Tick++
+	b.Frame = assets.Animate(b.Frame, b.Tick, b.Sprite.Meta.FrameTags[b.State])
+	if b.Frame == b.Sprite.Meta.FrameTags[b.State].To {
+		switch b.State {
+		case boxOpening:
+			b.State = boxOpen
+		case boxClosing:
+			b.State = boxClosed
+		}
+	}
+	return nil
 }
 
 func (b *Box) Draw(screen *ebiten.Image) {
-	ebitenutil.DrawRect(
-		screen,
-		float64(b.HitBox.Min.X),
-		float64(b.HitBox.Max.Y),
-		float64(b.HitBox.Dx()),
-		float64(b.HitBox.Dy()),
-		nokia.PaletteOriginal.Dark(),
+	s := b.Sprite
+	frame := s.Sprite[b.Frame]
+	op := &ebiten.DrawImageOptions{}
+
+	// Centre
+	op.GeoM.Translate(
+		float64(-frame.Position.W/2),
+		float64(-frame.Position.H/2),
+	)
+	// Position
+	op.GeoM.Translate(
+		float64(b.Coords.X),
+		float64(b.Coords.Y),
+	)
+
+	screen.DrawImage(
+		s.Image.SubImage(image.Rect(
+			frame.Position.X,
+			frame.Position.Y,
+			frame.Position.X+frame.Position.W,
+			frame.Position.Y+frame.Position.H,
+		)).(*ebiten.Image),
+		op,
 	)
 }
 
@@ -43,10 +74,20 @@ func NewBox(coords image.Point, size int) *Box {
 			coords.Sub(boxOffset),
 			coords.Add(boxOffset),
 		},
+		Sprite: assets.LoadSprite("box"),
+		State:  boxClosed,
 	}
 }
 
 // Move moves the player upwards
 func (b *Box) Pull() {
-	b.Chute = !b.Chute
+	if b.State != boxOpening && b.State != boxClosing {
+		b.Chute = !b.Chute
+	}
+	if b.State == boxOpen {
+		b.State = boxClosing
+	}
+	if b.State == boxClosed {
+		b.State = boxOpening
+	}
 }

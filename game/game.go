@@ -63,6 +63,8 @@ type GameScreen struct {
 func (g *GameScreen) Update() error {
 	g.Tick++
 
+	g.Box.Update()
+
 	if g.Box.Chute {
 		if g.Tick%2 == 0 {
 			g.Dusts.MoveUp()

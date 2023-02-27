@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
-	"path"
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -20,7 +19,7 @@ import (
 	"github.com/tinne26/etxt"
 )
 
-//go:embed *.png
+//go:embed *.png *.json
 var assets embed.FS
 
 // Frame is a single frame of an animation, usually a sub-image of a larger
@@ -67,8 +66,8 @@ type SpriteSheet struct {
 
 // Load a sprite image and associated meta-data given a file name (without
 // extension)
-func loadSprite(name string) *SpriteSheet {
-	name = path.Join("assets", "sprites", name)
+func LoadSprite(name string) *SpriteSheet {
+	// name = path.Join("sprites", name)
 	log.Printf("loading %s\n", name)
 
 	file, err := assets.Open(name + ".json")
