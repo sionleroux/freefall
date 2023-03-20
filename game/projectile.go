@@ -84,7 +84,7 @@ const maxSpacing = 15
 
 func (ps *Projectiles) Spawn(tick int) {
 	spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
-	speedMin, speedMax := 0.8, 3.0
+	speedMin, speedMax := 0.8, 2.4
 	speed := speedMin + rand.Float64()*(speedMax-speedMin)
 	var velocity float64
 	if spawnSide == 0 {
