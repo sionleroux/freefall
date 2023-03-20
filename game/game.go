@@ -139,8 +139,8 @@ func (g *GameScreen) Update() error {
 
 	for _, p := range g.Projectiles {
 		ProjHitBox := image.Rectangle{
-			p.Coords,
-			p.Coords.Add(image.Pt(ProjSize, ProjSize)),
+			p.Coords.Pt(),
+			p.Coords.Pt().Add(image.Pt(ProjSize, ProjSize)),
 		}
 		if g.Box.HitBox.Overlaps(ProjHitBox) {
 			log.Printf("game over: %v hit %v", ProjHitBox, g.Box.HitBox)

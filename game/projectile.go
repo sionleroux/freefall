@@ -1,7 +1,6 @@
 package game
 
 import (
-	"image"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -13,11 +12,11 @@ import (
 // Projectile is something that flies across the screen and causes damage if it
 // hits the box
 type Projectile struct {
-	Coords   image.Point
+	Coords   Point
 	Tail     int
 	Size     int
-	Velocity int // Direction and speed
-	Spacing  int // How far away to place the next one
+	Velocity float64 // Direction and speed
+	Spacing  int     // How far away to place the next one
 }
 
 const TailMax = 10 // Maximum length of projectile tail
@@ -45,8 +44,8 @@ func (p *Projectile) Draw(screen *ebiten.Image) {
 	if p.Tail > 0 {
 		ebitenutil.DrawLine(
 			screen,
-			float64(p.Coords.X-(ProjSize+TailDist)*p.Velocity), float64(p.Coords.Y+1),
-			float64(p.Coords.X-(ProjSize+TailDist+p.Tail)*p.Velocity), float64(p.Coords.Y+1),
+			p.Coords.X-(ProjSize+TailDist)*p.Velocity, p.Coords.Y+1,
+			p.Coords.X-(ProjSize+TailDist+float64(p.Tail))*p.Velocity, p.Coords.Y+1,
 			nokia.PaletteOriginal.Dark(),
 		)
 	}
@@ -85,15 +84,16 @@ const maxSpacing = 15
 
 func (ps *Projectiles) Spawn(tick int) {
 	spawnSide := rand.Intn(2) * nokia.GameSize.X // left or right of screen
-	speed := rand.Intn(2) + 1
-	var velocity int
+	speedMin, speedMax := 0.8, 3.0
+	speed := speedMin + rand.Float64()*(speedMax-speedMin)
+	var velocity float64
 	if spawnSide == 0 {
 		velocity = speed
 	} else {
 		velocity = -speed
 	}
 	*ps = append(*ps, &Projectile{
-		Coords:   image.Pt(spawnSide, nokia.GameSize.Y+1),
+		Coords:   Point{float64(spawnSide), float64(nokia.GameSize.Y + 1)},
 		Size:     ProjSize,
 		Velocity: velocity,
 		Spacing:  tick + rand.Intn(maxSpacing),
